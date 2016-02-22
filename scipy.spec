@@ -3,8 +3,8 @@
 
 Summary: Scipy: Scientific Tools for Python
 Name: %{?scl_prefix}scipy
-Version: 0.13.3
-Release: 1%{?dist}
+Version: 0.17.0
+Release: 2%{?dist}
 
 Group: Development/Libraries
 # BSD -- whole package except:
@@ -12,7 +12,7 @@ Group: Development/Libraries
 # Public Domain -- scipy/odr/__odrpack.c
 License: BSD and Boost and Public Domain
 Url: http://www.scipy.org
-Source0: http://downloads.sourceforge.net/scipy/%{pkg_name}-%{version}.tar.gz
+Source0: https://pypi.python.org/packages/source/s/scipy/scipy-%{version}.tar.gz
 
 BuildRequires: %{?scl_prefix}numpy, %{?scl_prefix}python-devel
 BuildRequires: %{?scl_prefix}f2py
@@ -42,8 +42,8 @@ leading scientists and engineers.
 %setup -n %{pkg_name}-%{version} -q
 
 # Bundled libs
-rm scipy/lib/six.py
-find -name \*.py | xargs sed -i -e 's/scipy\.lib\.six/six/'
+rm scipy/_lib/six.py
+find -name \*.py | xargs sed -i -e 's/scipy\._lib\.six/six/'
 cat > site.cfg << EOF
 
 [amd]
@@ -79,6 +79,13 @@ env CFLAGS="%{optflags}" \
     %{__python3} setup.py install --root %{buildroot}
 %{?scl:EOF}
 
+pushd %{buildroot}%{python3_sitearch}/%{pkg_name} &> /dev/null
+
+# resolves rhbz#1289566
+sed -i -e 's"^#!/usr/bin/python"#!%{?_scl_root}/usr/bin/python"' special/generate_ufuncs.py
+
+popd &> /dev/null
+
 %check
 mkdir test
 cd test
@@ -93,6 +100,12 @@ PYTHONPATH="%{buildroot}%{python3_sitearch}" %{__python3} -c "import scipy; scip
 
 
 %changelog
+* Tue Feb 16 2016 Nikola Forró <nforro@redhat.com> - 0.17.0-2
+- Update shebang to point to interpreter in collection, rhbz#1289566
+
+* Tue Feb 16 2016 Nikola Forró <nforro@redhat.com> - 0.17.0-1
+- Update to 0.17.0
+
 * Wed Jan 28 2015 jchaloup <jchaloup@redhat.com> - 0.13.3-1
 - Update to 0.13.3
 
