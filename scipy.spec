@@ -4,7 +4,7 @@
 Summary: Scipy: Scientific Tools for Python
 Name: %{?scl_prefix}scipy
 Version: 0.12.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 Group: Development/Libraries
 # BSD -- whole package except:
@@ -24,7 +24,7 @@ BuildRequires: %{?scl_prefix}numpy, %{?scl_prefix}python2-devel
 BuildRequires: %{?scl_prefix}f2py
 BuildRequires: %{?scl_prefix}python-six
 BuildRequires: fftw-devel, blas-devel, lapack-devel
-BuildRequires: %{?scl_prefix}suitesparse-devel
+BuildRequires: suitesparse-devel
 BuildRequires: atlas-devel
 BuildRequires: gcc-gfortran, swig
 Requires: %{?scl_prefix}numpy
@@ -58,13 +58,13 @@ find -name \*.py | xargs sed -i -e 's/scipy\.lib\.six/six/'
 cat > site.cfg << EOF
 
 [amd]
-library_dirs = %{_libdir}
-include_dirs = %{_includedir}/suitesparse
+library_dirs = %{?scl:%_root_libdir}%{?!scl:%_libdir}
+include_dirs = %{?scl:%_root_includedir}%{?!scl:%_includedir}/suitesparse
 amd_libs = amd
 
 [umfpack]
-library_dirs = %{_libdir}
-include_dirs = %{_includedir}/suitesparse
+library_dirs = %{?scl:%_root_libdir}%{?!scl:%_libdir}
+include_dirs = %{?scl:%_root_includedir}%{?!scl:%_includedir}/suitesparse
 umfpack_libs = umfpack
 EOF
 
@@ -111,10 +111,14 @@ PYTHONPATH="%{buildroot}%{python_sitearch}" %{__python} -c "import scipy; scipy.
 
 
 %changelog
-* Tue Feb 16 2016 Nikola Forró <nforro@redhat.com> - 0.12.1-3
+* Tue Feb 16 2016 Nikola Forró <nforro@redhat.com> - 0.12.1-4
 - Update shebang to point to interpreter in collection, rhbz#1289562
 
-* Mon Nov 18 2013 Tomas Tomecek <ttomecek@redhat.com> - 0.12.1-2
+* Wed Nov 20 2013 Tomas Tomecek <ttomecek@redhat.com> - 0.12.1-3
+- link against SCL packages
+- use macros instead of hardcoded paths
+
+* Fri Nov 15 2013 Tomas Tomecek <ttomecek@redhat.com> - 0.12.1-2
 - RHSCL-1.1 build
 
 * Wed Oct 16 2013 Tomas Tomecek <ttomecek@redhat.com> - 0.12.1-1
