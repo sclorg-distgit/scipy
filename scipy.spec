@@ -4,7 +4,7 @@
 Summary: Scipy: Scientific Tools for Python
 Name: %{?scl_prefix}scipy
 Version: 0.12.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 
 Group: Development/Libraries
 # BSD -- whole package except:
@@ -90,6 +90,13 @@ env CFLAGS="%{optflags}" \
     %{__python} setup.py install --root %{buildroot}
 %{?scl:EOF}
 
+pushd %{buildroot}%{python_sitearch}/%{pkg_name} &> /dev/null
+
+# resolves rhbz#1289562
+sed -i -e 's"^#!/usr/bin/python"#!%{?_scl_root}/usr/bin/python"' special/generate_ufuncs.py
+
+popd &> /dev/null
+
 %check
 mkdir test
 cd test
@@ -104,6 +111,9 @@ PYTHONPATH="%{buildroot}%{python_sitearch}" %{__python} -c "import scipy; scipy.
 
 
 %changelog
+* Tue Feb 16 2016 Nikola Forró <nforro@redhat.com> - 0.12.1-4
+- Update shebang to point to interpreter in collection, rhbz#1289562
+
 * Wed Nov 20 2013 Tomas Tomecek <ttomecek@redhat.com> - 0.12.1-3
 - link against SCL packages
 - use macros instead of hardcoded paths
