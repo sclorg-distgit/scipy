@@ -3,7 +3,7 @@
 
 Summary: Scipy: Scientific Tools for Python
 Name: %{?scl_prefix}scipy
-Version: 0.19.0
+Version: 0.19.1
 Release: 1%{?dist}
 
 Group: Development/Libraries
@@ -16,7 +16,6 @@ Source0: https://github.com/scipy/scipy/releases/download/v%{version}/scipy-%{ve
 
 BuildRequires: %{?scl_prefix}numpy, %{?scl_prefix}python-devel
 BuildRequires: %{?scl_prefix}f2py
-BuildRequires: %{?scl_prefix}python-six
 BuildRequires: fftw-devel, blas-devel, lapack-devel
 BuildRequires: suitesparse-devel
 BuildRequires: atlas-devel
@@ -24,7 +23,6 @@ BuildRequires: gcc-gfortran, swig
 Requires: %{?scl_prefix}numpy
 Requires: %{?scl_prefix}python
 Requires: %{?scl_prefix}f2py
-Requires: %{?scl_prefix}python-six
 
 %description
 Scipy is open-source software for mathematics, science, and
@@ -41,9 +39,6 @@ leading scientists and engineers.
 %prep
 %setup -n %{pkg_name}-%{version} -q
 
-# Bundled libs
-rm scipy/_lib/six.py
-find -name \*.py | xargs sed -i -e 's/scipy\._lib\.six/six/'
 cat > site.cfg << EOF
 
 [amd]
@@ -100,6 +95,12 @@ PYTHONPATH="%{buildroot}%{python3_sitearch}" %{__python3} -c "import scipy; scip
 
 
 %changelog
+* Tue Jun 27 2017 Nikola Forró <nforro@redhat.com> - 0.19.1-1
+- Update to 0.19.1, rhbz#1465476
+
+* Tue Jun 27 2017 Nikola Forró <nforro@redhat.com> - 0.19.0-2
+- Do not use python-six from RHSCL, rhbz#1465545
+
 * Tue Jun 20 2017 Charalampos Stratakis <cstratak@redhat.com> - 0.19.0-1
 - Update to 0.19.0 for rh-python36
 
